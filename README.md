@@ -18,10 +18,6 @@ spring.datasource.password={PostgreSql Server Password}
 
 ## Setup
 ```
-$ git clone https://github.com/burakgules06/laboratorianbackend.git
-$ cd laboratorianbackend
-$ sudo apt-get install maven
-$ mvn -N io.takari:maven:wrapper
-$ ./mvnw package
-$ cd target/
-$ java -jar laborantproject-0.0.1-SNAPSHOT.jar
+> git clone https://github.com/burakgules06/laboratorianbackend.git
+> cd laboratorianbackend
+> mvn spring-boot:run
