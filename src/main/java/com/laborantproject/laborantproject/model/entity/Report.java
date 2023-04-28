@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @Entity
@@ -18,7 +19,7 @@ public class Report {
     private String diagnosisTitle;
     private String diagnosis;
     private Date date;
-    private String imageName;
+    private String attachmentId;
     @ManyToOne
     private Laboratorian laboratorian;
     @ManyToOne

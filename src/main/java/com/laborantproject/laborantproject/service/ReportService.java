@@ -5,6 +5,7 @@ import com.laborantproject.laborantproject.model.dto.response.ReportResponse;
 import com.laborantproject.laborantproject.model.entity.Report;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

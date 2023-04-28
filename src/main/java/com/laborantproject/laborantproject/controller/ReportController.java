@@ -2,6 +2,8 @@ package com.laborantproject.laborantproject.controller;
 
 import com.laborantproject.laborantproject.model.dto.request.ReportRequest;
 import com.laborantproject.laborantproject.model.dto.response.ReportResponse;
+import com.laborantproject.laborantproject.model.entity.Attachment;
+import com.laborantproject.laborantproject.service.AttachmentService;
 import com.laborantproject.laborantproject.service.LaboratorianService;
 import com.laborantproject.laborantproject.service.PatientService;
 import com.laborantproject.laborantproject.service.ReportService;
@@ -10,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,30 +25,29 @@ public class ReportController {
     private final ReportService reportService;
     private final LaboratorianService laboratorianService;
     private final PatientService patientService;
+    private AttachmentService attachmentService;
+
 
     @PostMapping("/new")
-    public ResponseEntity<ReportRequest> createReport(@RequestBody ReportRequest reportRequest){
+    public ResponseEntity<ReportRequest> createReport(@ModelAttribute ReportRequest reportRequest,
+                                                      @RequestParam("file")MultipartFile file) throws Exception {
+    Attachment attachment = null;
+    String downloadUrl = "";
         if(reportRequest.getLabIdNo()!=null || reportRequest.getPatientId()!=null){
             try{
                 var labIdNoVal = laboratorianService.findLabPersonalById(reportRequest.getLabIdNo());
                 var patientIdVal = patientService.findPatientById(reportRequest.getPatientId());
-
                 reportRequest.setLabIdNo(labIdNoVal.getLabIdNo());
                 reportRequest.setPatientId(patientIdVal.getPatientId());
             }catch (Exception e){
                 //yanlış req
             }
         }
+        attachment = attachmentService.saveAttachment(file);
+        reportRequest.setAttachmentId(attachment.getId());
         ReportRequest resultReport = reportService.save(reportRequest);
         return ResponseEntity.ok(resultReport);
     }
-    @GetMapping("/findAll")
-    public ResponseEntity<List<ReportRequest>> findAllReports(){
-        List<ReportRequest> reportRequests = reportService.getReports();
-
-        return ResponseEntity.ok(reportRequests);
-    }
-
 
      @GetMapping("/findAll/sorted")
      public ResponseEntity<List<ReportResponse>> findBySorted(){
@@ -70,7 +72,6 @@ public class ReportController {
         resultDto.setDate(reportRequest.getDate());
         resultDto.setDiagnosisTitle(reportRequest.getDiagnosisTitle());
         resultDto.setLabIdNo(reportRequest.getLabIdNo());
-        resultDto.setImageName(reportRequest.getImageName());
         reportService.save(resultDto);
         return ResponseEntity.ok(resultDto);
     }

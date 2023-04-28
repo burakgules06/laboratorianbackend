@@ -2,6 +2,7 @@ package com.laborantproject.laborantproject.service.Impl;
 
 import com.laborantproject.laborantproject.model.dto.request.ReportRequest;
 import com.laborantproject.laborantproject.model.dto.response.ReportResponse;
+import com.laborantproject.laborantproject.model.entity.Attachment;
 import com.laborantproject.laborantproject.model.entity.Laboratorian;
 import com.laborantproject.laborantproject.model.entity.Patient;
 import com.laborantproject.laborantproject.model.entity.Report;
@@ -15,9 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -49,8 +50,14 @@ public class ReportServiceImpl implements ReportService {
         Report report = modelMapper.map(reportRequest, Report.class);
         report.setPatient(Patient.builder().patientId(reportRequest.getPatientId()).build());
         report.setLaboratorian(Laboratorian.builder().labIdNo(reportRequest.getLabIdNo()).build());
+        report.setAttachmentId(reportRequest.getAttachmentId());
         report.setDate(new Date());
-        report=reportRepository.save(report);
+        try{
+            report=reportRepository.save(report);
+        }catch (Exception e){
+            System.out.println("kaydedemedim.");
+        }
+
         return modelMapper.map(report, ReportRequest.class);
 
     }
@@ -72,7 +79,9 @@ public class ReportServiceImpl implements ReportService {
             ReportRequest reportRequest = modelMapper.map(report.get(), ReportRequest.class);
             reportRequest.setLabIdNo(report.get().getLaboratorian().getLabIdNo());
             reportRequest.setPatientId(report.get().getPatient().getPatientId());
+            reportRequest.setAttachmentId(report.get().getAttachmentId());
             return reportRequest;
+
         }
         return null;
     }
